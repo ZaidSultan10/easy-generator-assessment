@@ -24,7 +24,6 @@ const Signin: React.FC = () => {
         email: email,
         password: password,
       });
-      setIsLoading(false);
       console.log("validatedData --- ", validatedData?.email);
       const response = await axios.post(
         "http://localhost:5012/signin",
@@ -38,9 +37,8 @@ const Signin: React.FC = () => {
           },
         }
       );
+      setIsLoading(false);
       if (response) {
-        // setMessage(response);
-        setMessageColor("green");
         navigate("/home");
       }
     } catch (Err) {
@@ -52,6 +50,12 @@ const Signin: React.FC = () => {
   };
   return (
     <div className="flex flex-col items-center justify-center h-lvh w-full p-8">
+      {message && messageColor && (
+        <Title
+          text={message}
+          titleStyles={`text-[20px] text-${messageColor}-500 bg-${messageColor}-700 p-1 w-[400px] flex items-center`}
+        />
+      )}
       <div>
         <Title
           titleStyles={`text-[40px] mb-8`}
