@@ -16,6 +16,13 @@ const Signin: React.FC = () => {
 
   const navigate = useNavigate();
 
+  const resetAllStates = () => {
+    setEmail("");
+    setPassword("");
+    setMessageColor("");
+    setMessage("");
+  };
+
   const handleLogin = async () => {
     console.log("email: ", email, "-----", "password:", password);
     try {
@@ -39,6 +46,7 @@ const Signin: React.FC = () => {
       );
       setIsLoading(false);
       if (response) {
+        resetAllStates();
         navigate("/home");
       }
     } catch (Err) {

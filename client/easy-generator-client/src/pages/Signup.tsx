@@ -16,6 +16,14 @@ const Signup: React.FC = () => {
   const [messageColor, setMessageColor] = useState<string>("");
   const navigate = useNavigate();
 
+  const resetAllStates = () => {
+    setEmail("");
+    setPassword("");
+    setName("");
+    setMessageColor("");
+    setMessage("");
+  };
+
   const handleSignup = async () => {
     try {
       console.log(
@@ -50,6 +58,7 @@ const Signup: React.FC = () => {
       );
       setIsLoading(false);
       if (response) {
+        resetAllStates();
         navigate("/");
       }
     } catch (Err) {
