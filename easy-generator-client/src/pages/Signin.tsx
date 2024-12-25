@@ -79,7 +79,7 @@ const Signin: React.FC = () => {
           text={`Login to your profile`}
         />
       </div>
-      <div className="w-[600px] p-3 h-full rounded-md">
+      <div className="w-[600px] p-3 h-full rounded-md border-2 border-grey-200 h-[350px] bg-white">
         <div className="w-full m-2 p-2 flex items-center justify-center">
           <Input
             type={"text"}

@@ -80,7 +80,7 @@ const Signup: React.FC = () => {
       <div>
         <Title titleStyles={`text-[40px] mb-8`} text={`Create your profile`} />
       </div>
-      <div className="w-[600px] p-3 h-full rounded-md">
+      <div className="w-[600px] p-3 h-full rounded-md h-[420px] bg-white">
         <div className="w-full m-2 p-2 flex items-center justify-center">
           <Input
             type={"text"}
