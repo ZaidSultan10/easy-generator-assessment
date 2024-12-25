@@ -23,7 +23,7 @@ export class AuthController {
     return req.user as { accessToken: string };
   }
 
-  @Get('me')
+  @Get('verifyToken')
   @UseGuards(PassportJwtAuthGuard)
   getUserInfo(@Request() req: ExpressRequest) {
     return req.user;

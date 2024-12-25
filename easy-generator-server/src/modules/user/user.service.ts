@@ -1,7 +1,4 @@
-import {
-  HttpStatus,
-  Injectable,
-} from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from './entity/user.entity';
 import { Model } from 'mongoose';
@@ -20,18 +17,27 @@ export class UserService {
     return this.userModel.findOne({ email: email }).exec();
   }
 
-  async createUser(userDto: UserDTO) {
-    this.loggerService.log('Creating a new user');
-    const user = await this.findByEmail(userDto.email);
-    if (user) {
-      return {
-        statusCode: HttpStatus.CONFLICT,
-        message: 'User Already Exists',
-      };
+  async createUser(userData: UserDTO) {
+    try {
+      this.loggerService.log('Receieved user data from request');
+      const user = await this.findByEmail(userData.email);
+      if (user) {
+        this.loggerService.error('Existing user record found', '');
+        return {
+          statusCode: HttpStatus.CONFLICT,
+          message: 'User Already Exists',
+        };
+      }
+      userData.password = await bcrypt.hash(userData.password, 8);
+      const createdUser = new this.userModel(userData);
+      await createdUser.save();
+      this.loggerService.log('User saved in db successfully');
+      return { statusCode: HttpStatus.CREATED, message: 'User Registered' };
+    } catch (Err) {
+      if (Err instanceof Error) {
+        this.loggerService.error(Err.message, JSON.stringify(Err));
+        throw new Error(Err.message);
+      }
     }
-    userDto.password = await bcrypt.hash(userDto.password, 8);
-    const createdUser = new this.userModel(userDto);
-    await createdUser.save();
-    return { statusCode: HttpStatus.CREATED, message: 'User Registered' };
   }
 }
