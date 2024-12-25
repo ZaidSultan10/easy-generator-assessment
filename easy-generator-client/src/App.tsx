@@ -6,7 +6,7 @@ import Signin from "./pages/Signin.tsx";
 import Welcome from "./pages/Welcome.tsx";
 import NoPageMatch from "./pages/NoPageMatch.tsx";
 import ProtectedRoute from "./protectedRoute.tsx";
-import { AuthProvider } from "./authContext.tsx";
+import { AuthProvider } from "./context/authContext.tsx";
 function App() {
   return (
     <div className="App">

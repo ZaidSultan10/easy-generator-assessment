@@ -9,7 +9,6 @@ import {
   LoggerService,
 } from '@nestjs/common';
 import { PassportLocalGuard } from './guards/passport-local.guard';
-import { PassportJwtAuthGuard } from './guards/passport-jwt.guard';
 import { Request as ExpressRequest } from 'express';
 
 @Controller('auth')
@@ -24,7 +23,7 @@ export class AuthController {
   }
 
   @Get('verifyToken')
-  @UseGuards(PassportJwtAuthGuard)
+  @UseGuards(PassportLocalGuard)
   getUserInfo(@Request() req: ExpressRequest) {
     return req.user;
   }

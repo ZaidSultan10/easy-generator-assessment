@@ -21,7 +21,7 @@ export class AuthService {
         const payload = { email: user.email, sub: user._id };
         const token = this.jwtService.sign(payload);
         this.loggerService.log('Set payload and generate token');
-        return { accessToken: token };
+        return { statusCode: HttpStatus.OK, accessToken: token };
       }
       this.loggerService.error('Wrong username or password', '');
       return {

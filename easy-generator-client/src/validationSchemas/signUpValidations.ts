@@ -2,15 +2,13 @@ import { object, string } from "yup";
 
 const passwordRegex =
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-
-export const signInSchema = object({
-  email: string().email().required(),
-  password: string().required(),
-});
+const nameRegex = /^[A-Za-z ]+$/;
 
 export const signUpSchema = object({
   email: string().email().required(),
-  name: string().required(),
+  name: string()
+    .matches(nameRegex, `Name must only contains alphabets`)
+    .required(),
   password: string()
     .matches(
       passwordRegex,

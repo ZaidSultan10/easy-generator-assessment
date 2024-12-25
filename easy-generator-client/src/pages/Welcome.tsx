@@ -4,7 +4,10 @@ import Title from "../components/Title.tsx";
 const Welcome = () => {
   return (
     <div className="w-full m-2 p-2 flex items-center justify-center">
-      <Title titleStyles={`text-[40px]`} text={`Welcome to the application`} />
+      <Title
+        titleStyles={`text-[40px] text-[#fff] font-bold`}
+        text={`Welcome to the application`}
+      />
     </div>
   );
 };

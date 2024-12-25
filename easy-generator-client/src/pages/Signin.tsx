@@ -3,42 +3,45 @@ import Input from "../components/Input.tsx";
 import Button from "../components/Button.tsx";
 import Title from "../components/Title.tsx";
 import { Link } from "react-router-dom";
-import { signInSchema } from "../validationSchemas.ts";
 import axios from "axios";
-import { SignInData } from "../types.ts";
 import { SIGN_IN_API } from "../api/authenticationApis.ts";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../authContext.tsx";
+import { useAuth } from "../context/authContext.tsx";
+import { signInSchema } from "../validationSchemas/signInValidations.ts";
+import { SignInTypes } from "../interfaces/signInTypes.ts";
+import { messageColorsProps } from "../interfaces/commonComponentTypes.ts";
+import { messageColorsDanger } from "../utils.ts";
 
 const Signin: React.FC = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [message, setMessage] = useState<string>("");
-  const [messageColor, setMessageColor] = useState<string>("");
+  const [messageColor, setMessageColor] = useState<messageColorsProps | null>(
+    null
+  );
   const { login } = useAuth();
   const navigate = useNavigate();
 
   const resetAllStates = () => {
     setEmail("");
     setPassword("");
-    setMessageColor("");
+    setMessageColor(null);
     setMessage("");
   };
 
   const handleLogin = async () => {
     try {
       setIsLoading(true);
-      const validatedData: SignInData = await signInSchema.validate({
+      const validatedData: SignInTypes = await signInSchema.validate({
         email: email,
         password: password,
       });
-      console.log("validatedData --- ", validatedData?.email);
       const response = await axios.post(
         SIGN_IN_API,
         {
-          email: email,
-          password: password,
+          email: validatedData?.email,
+          password: validatedData?.password,
         },
         {
           headers: {
@@ -46,27 +49,28 @@ const Signin: React.FC = () => {
           },
         }
       );
-      console.log("response.data");
       setIsLoading(false);
-      if (response.status === 200) {
+      if (response?.data?.statusCode === 200) {
         resetAllStates();
         login(response.data.accessToken);
         navigate("/home");
+      } else {
+        setMessageColor(messageColorsDanger());
+        setMessage(response?.data?.message);
       }
     } catch (Err) {
       console.log(Err);
       setIsLoading(false);
-      setMessageColor("red");
+      setMessageColor(messageColorsDanger());
       setMessage(Err.message);
     }
   };
-  //   console.log(process.env.PORT)
   return (
     <div className="flex flex-col items-center justify-center h-lvh w-full p-8">
       {message && messageColor && (
         <Title
           text={message}
-          titleStyles={`text-[20px] text-${messageColor}-500 bg-${messageColor}-700 p-1 w-[400px] flex items-center`}
+          titleStyles={`text-[20px] ${messageColor?.text} ${messageColor?.bgColor} ${messageColor?.borderColor} p-1 w-[400px] flex items-center`}
         />
       )}
       <div>

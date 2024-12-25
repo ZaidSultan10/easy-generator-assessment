@@ -2,11 +2,13 @@ import React, { useState } from "react";
 import Input from "../components/Input.tsx";
 import Button from "../components/Button.tsx";
 import Title from "../components/Title.tsx";
-import { useNavigate } from "react-router-dom";
-import { signUpSchema } from "../validationSchemas.ts";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { SignUpData } from "../types.ts";
 import { SIGN_UP_API } from "../api/authenticationApis.ts";
+import { signUpSchema } from "../validationSchemas/signUpValidations.ts";
+import { SignUpTypes } from "../interfaces/signUpTypes.ts";
+import { messageColorsProps } from "../interfaces/commonComponentTypes.ts";
+import { messageColorsDanger, messageColorsSuccess } from "../utils.ts";
 
 const Signup: React.FC = () => {
   const [email, setEmail] = useState<string>("");
@@ -14,42 +16,33 @@ const Signup: React.FC = () => {
   const [name, setName] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [message, setMessage] = useState<string>("");
-  const [messageColor, setMessageColor] = useState<string>("");
+  const [messageColor, setMessageColor] = useState<messageColorsProps | null>(
+    null
+  );
   const navigate = useNavigate();
 
   const resetAllStates = () => {
     setEmail("");
     setPassword("");
     setName("");
-    setMessageColor("");
+    setMessageColor(null);
     setMessage("");
   };
 
   const handleSignup = async () => {
     try {
-      console.log(
-        "email: ",
-        email,
-        "-----",
-        "password:",
-        password,
-        "----",
-        "name:",
-        name
-      );
       setIsLoading(true);
-      const validatedData: SignUpData = await signUpSchema.validate({
+      const validatedData: SignUpTypes = await signUpSchema.validate({
         email: email,
         password: password,
         name: name,
       });
-      console.log("validatedData --- ", validatedData?.email);
       const response = await axios.post(
         SIGN_UP_API,
         {
-          email: email,
-          password: password,
-          name: name,
+          email: validatedData?.email,
+          password: validatedData?.password,
+          name: validatedData?.name,
         },
         {
           headers: {
@@ -58,14 +51,21 @@ const Signup: React.FC = () => {
         }
       );
       setIsLoading(false);
-      if (response) {
-        resetAllStates();
-        navigate("/");
+      if (response?.data?.statusCode === 201) {
+        setMessageColor(messageColorsSuccess());
+        setMessage(response?.data?.message);
+        setTimeout(() => {
+          resetAllStates();
+          navigate("/");
+        }, 1000);
+      } else {
+        setMessageColor(messageColorsDanger());
+        setMessage(response?.data?.message);
       }
     } catch (Err) {
       console.log(Err);
       setIsLoading(false);
-      setMessageColor("red");
+      setMessageColor(messageColorsDanger());
       setMessage(Err.message);
     }
   };
@@ -74,7 +74,7 @@ const Signup: React.FC = () => {
       {message && messageColor && (
         <Title
           text={message}
-          titleStyles={`text-[20px] text-${messageColor}-500 bg-${messageColor}-700 p-1 w-[400px] flex items-center`}
+          titleStyles={`text-[20px] ${messageColor?.text} ${messageColor?.bgColor} ${messageColor?.borderColor} p-1 w-[400px] flex items-center`}
         />
       )}
       <div>
@@ -136,6 +136,15 @@ const Signup: React.FC = () => {
             buttonStyles={`bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full p-3 w-[400px] place-items-center`}
             handleClick={() => handleSignup()}
           />
+        </div>
+        <div className="w-full m-2 p-2 flex items-center justify-center">
+          <Title titleStyles={`mr-2`} text={`Already have an account?`} />
+          <Link to={"/"}>
+            <Button
+              title={"Sign In"}
+              buttonStyles={`bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full p-3 w-[200px]`}
+            />
+          </Link>
         </div>
       </div>
     </div>
