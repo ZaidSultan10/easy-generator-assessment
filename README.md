@@ -18,4 +18,4 @@ Please check server env for mongodb URI. I have kept mongodb ip as global so on 
 
 For any further questions please reach out to zaidsultan09@gmail.com
 
-Hope you like it. Ignore the UI. 
+Hope you like it. Ignore the UI. The functionality works as expected
